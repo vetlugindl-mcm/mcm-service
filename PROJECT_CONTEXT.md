@@ -74,3 +74,37 @@ Required keys:
 - [x] AI Recognition logic (via OpenRouter).
 - [ ] **Next Step:** Word (.docx) generation based on `extracted_data`.
 - [ ] **Next Step:** PDF to Image conversion (to support PDF parsing via Vision API).
+## Клиентская карточка: расширение полей и хранилище документов
+
+- Новые поля клиента (сохраняются в таблице `clients`):
+  - `registration_place` — место регистрации
+  - Блок диплома: `diploma_series`, `diploma_number`, `diploma_reg_number` (уникально), `diploma_university_name`, `diploma_university_location`, `diploma_specialty`, `diploma_specialization`, `diploma_qualification`, `diploma_qualification_date`, `diploma_file_url`
+  - Блок свидетельства: `cert_reg_number` (уникально), `cert_issue_date`, `cert_expiry_date`, `cert_center_name`, `cert_center_location`, `cert_file_url`
+  - Номер паспорта хранится в `extracted_data.number` (JSON)
+
+- Хранилище файлов: Supabase Storage (`documents` bucket). В БД сохраняются относительные пути (`*_file_url`), доступ к файлам по публичной ссылке.
+
+- UI: Форма редактирования (`src/components/client-data-form.tsx`) поддерживает загрузку файлов, просмотр по публичной ссылке и live‑валидацию уникальности.
+
+### API
+- CRUD клиенты: `src/app/api/clients` (см. PATCH поддерживает новые поля)
+- Валидация уникальности: `GET /api/clients/validate?field=...&value=...&exclude_id=...`
+  - `field`: `passport_number` | `diploma_reg_number` | `cert_reg_number`
+  - `exists`: true/false
+
+### Серверные экшены
+- Обновление карточки клиента: `src/app/actions/updateClientProfile.ts`
+  - Валидация уникальности (диплом, свидетельство, паспорт)
+  - Обновляет поля `clients`, при необходимости сливает номер паспорта в `extracted_data`
+
+### Рекомендации по схеме БД (Postgres/Supabase)
+- Добавить уникальные ограничения:
+  - `ALTER TABLE clients ADD CONSTRAINT clients_diploma_reg_number_key UNIQUE (diploma_reg_number);`
+  - `ALTER TABLE clients ADD CONSTRAINT clients_cert_reg_number_key UNIQUE (cert_reg_number);`
+- Для паспорта рекомендуется вынести `passport_number` в отдельный столбец (и поддерживать синхронизацию), затем:
+  - `ALTER TABLE clients ADD COLUMN passport_number text;`
+  - `ALTER TABLE clients ADD CONSTRAINT clients_passport_number_key UNIQUE (passport_number);`
+
+### Безопасность и доступ
+- Для мутаций используйте серверный ключ (`SERVER_API_KEY`) в `Authorization: Bearer ...`.
+- Конфиденциальные данные не коммитятся; `.env.local` игнорируется.

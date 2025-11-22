@@ -54,7 +54,7 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
           <CardTitle>Данные клиента</CardTitle>
         </CardHeader>
         <CardContent>
-          <ClientDataForm clientId={id} data={client?.extracted_data ?? {}} />
+          <ClientDataForm clientId={id} data={client?.extracted_data ?? {}} clientMeta={client ?? undefined} />
         </CardContent>
       </Card>
     </div>
