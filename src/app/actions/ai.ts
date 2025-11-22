@@ -51,10 +51,28 @@ export async function recognizeDocument(fileUrl: string, clientId: string) {
     .eq('id', clientId)
     .single()
 
-  const merged: ExtractedData = { ...(current?.extracted_data ?? {}), ...(parsed ?? {}) }
+  const dt = String(parsed.doc_type ?? '')
+  const extractedPatch: ExtractedData = {}
+  if (dt === 'passport') {
+    const keys: (keyof ExtractedData)[] = ['surname','name','patronymic','birth_date','series','number','issuer','issue_date','code','snils_number']
+    for (const k of keys) if (parsed[k] !== undefined) (extractedPatch as Record<string, unknown>)[k as string] = parsed[k] as unknown
+  } else if (dt === 'diploma') {
+    if (parsed.series) extractedPatch.diploma_series = String(parsed.series)
+    if (parsed.number) extractedPatch.diploma_number = String(parsed.number)
+    const dkeys: (keyof Parsed)[] = [
+      'diploma_series','diploma_number','diploma_reg_number','diploma_university_name','diploma_university_location','diploma_specialty','diploma_specialization','diploma_qualification','diploma_qualification_date'
+    ]
+    for (const k of dkeys) if (parsed[k] !== undefined) (extractedPatch as Record<string, unknown>)[k as string] = parsed[k] as unknown
+  } else if (dt === 'certificate') {
+    const ckeys: (keyof Parsed)[] = ['cert_reg_number','cert_issue_date','cert_expiry_date','cert_center_name','cert_center_location']
+    for (const k of ckeys) if (parsed[k] !== undefined) (extractedPatch as Record<string, unknown>)[k as string] = parsed[k] as unknown
+  } else if (dt === 'snils') {
+    if (typeof parsed.snils_number === 'string' || parsed.snils_number === null) extractedPatch.snils_number = parsed.snils_number
+  }
+
+  const merged: ExtractedData = { ...(current?.extracted_data ?? {}), ...(extractedPatch ?? {}) }
 
   const profilePatch: Record<string, unknown> = {}
-  const dt = String(parsed.doc_type ?? '')
   if (dt === 'passport') {
     if (parsed.registration_place) profilePatch.registration_place = parsed.registration_place
   }
