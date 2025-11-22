@@ -15,7 +15,8 @@ export async function GET(req: NextRequest) {
     const clientId = searchParams.get('client_id') || undefined
     const data = await listDocuments(clientId)
     return Response.json({ data })
-  } catch (e: any) {
+  } catch (e: unknown) {
+    console.error(e)
     return Response.json({ error: 'Failed to list documents' }, { status: 500 })
   }
 }
@@ -32,7 +33,8 @@ export async function POST(req: NextRequest) {
     if (!client_id || !file_url) return Response.json({ error: 'client_id and file_url are required' }, { status: 400 })
     const data = await createDocumentService({ client_id, original_name, file_url, mime_type, size })
     return Response.json({ data }, { status: 201 })
-  } catch (e: any) {
+  } catch (e: unknown) {
+    console.error(e)
     return Response.json({ error: 'Failed to create document' }, { status: 500 })
   }
 }

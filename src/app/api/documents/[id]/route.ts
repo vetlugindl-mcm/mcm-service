@@ -15,7 +15,8 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
     const data = await getDocument(id)
     if (!data) return Response.json({ error: 'Not found' }, { status: 404 })
     return Response.json({ data })
-  } catch (e: any) {
+  } catch (e: unknown) {
+    console.error(e)
     return Response.json({ error: 'Failed to get document' }, { status: 500 })
   }
 }
@@ -24,7 +25,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!isAuthorized(req)) return Response.json({ error: 'Unauthorized' }, { status: 401 })
   try {
     const body = await req.json()
-    const patch: any = {}
+    const patch: Record<string, unknown> = {}
     if (typeof body?.original_name === 'string') patch.original_name = body.original_name
     if (typeof body?.file_url === 'string') patch.file_url = body.file_url
     if (typeof body?.mime_type === 'string') patch.mime_type = body.mime_type
@@ -33,7 +34,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const data = await updateDocumentService(id, patch)
     if (!data) return Response.json({ error: 'Not found' }, { status: 404 })
     return Response.json({ data })
-  } catch (e: any) {
+  } catch (e: unknown) {
+    console.error(e)
     return Response.json({ error: 'Failed to update document' }, { status: 500 })
   }
 }
@@ -45,7 +47,8 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     const ok = await deleteDocumentService(id)
     if (!ok) return Response.json({ error: 'Delete failed' }, { status: 500 })
     return Response.json({ ok: true })
-  } catch (e: any) {
+  } catch (e: unknown) {
+    console.error(e)
     return Response.json({ error: 'Failed to delete document' }, { status: 500 })
   }
 }

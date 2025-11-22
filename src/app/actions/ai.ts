@@ -58,7 +58,7 @@ export async function recognizeDocument(fileUrl: string, clientId: string) {
 }
 Верни ТОЛЬКО чистый JSON без markdown formatting.`
 
-  let parsed: any = {}
+  let parsed: Record<string, unknown> = {}
   try {
     const lower = fetchUrl.toLowerCase()
     const mime = lower.endsWith('.pdf')
@@ -81,6 +81,7 @@ export async function recognizeDocument(fileUrl: string, clientId: string) {
     console.log('GEMINI RAW RESPONSE:', text)
     parsed = tryParseJson(text) || {}
   } catch (e) {
+    console.error('AI primary error', e)
     try {
       const fallback = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
       const lower = fetchUrl.toLowerCase()
@@ -110,7 +111,7 @@ export async function recognizeDocument(fileUrl: string, clientId: string) {
     .eq('id', clientId)
     .single()
 
-  const merged = { ...(current?.extracted_data ?? {}), ...parsed }
+  const merged = { ...(current?.extracted_data ?? {}), ...(parsed ?? {}) }
   await supabase
     .from('clients')
     .update({ extracted_data: merged })

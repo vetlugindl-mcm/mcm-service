@@ -5,8 +5,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { updateClientDataAction } from '@/app/actions/updateClientData'
+import type { ExtractedData } from '../../types/database'
 
-type Data = Record<string, any>
+type Data = ExtractedData
 
 export function ClientDataForm({ clientId, data }: { clientId: string; data: Data }) {
   const [saving, setSaving] = useState(false)

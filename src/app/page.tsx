@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { getClients } from '@/app/actions/getClients'
 import { createClientAction } from '@/app/actions/createClient'

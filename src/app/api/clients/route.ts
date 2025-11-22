@@ -13,7 +13,8 @@ export async function GET() {
   try {
     const data = await listClients()
     return Response.json({ data })
-  } catch (e: any) {
+  } catch (e: unknown) {
+    console.error(e)
     return Response.json({ error: 'Failed to list clients' }, { status: 500 })
   }
 }
@@ -27,7 +28,8 @@ export async function POST(req: NextRequest) {
     if (!full_name.trim()) return Response.json({ error: 'full_name is required' }, { status: 400 })
     const data = await createClientService(full_name.trim(), status)
     return Response.json({ data }, { status: 201 })
-  } catch (e: any) {
+  } catch (e: unknown) {
+    console.error(e)
     return Response.json({ error: 'Failed to create client' }, { status: 500 })
   }
 }

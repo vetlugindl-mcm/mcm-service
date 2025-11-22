@@ -37,7 +37,7 @@ type ClientPatch = Partial<Pick<Client, 'full_name' | 'status' | 'extracted_data
 
 export async function updateClientService(id: string, patch: ClientPatch): Promise<Client | null> {
   const supabase = supabaseServer()
-  let payload: ClientPatch = {}
+  const payload: ClientPatch = {}
   if (typeof patch.full_name === 'string') payload.full_name = patch.full_name
   if (typeof patch.status === 'string') payload.status = patch.status
   if (patch.extracted_data !== undefined) {

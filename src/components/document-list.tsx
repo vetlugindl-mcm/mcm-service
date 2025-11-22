@@ -61,6 +61,7 @@ export function DocumentList({ documents, clientId }: { documents: Document[]; c
       router.refresh()
       alert('Изменения сохранены')
     } catch (e) {
+      console.error(e)
       alert('Ошибка сохранения')
     }
     setSaving(false)
@@ -82,6 +83,7 @@ export function DocumentList({ documents, clientId }: { documents: Document[]; c
       router.refresh()
       alert('Документ удалён')
     } catch (e) {
+      console.error(e)
       alert('Ошибка удаления')
     }
     setDeleting(false)

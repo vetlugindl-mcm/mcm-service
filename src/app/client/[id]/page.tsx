@@ -46,7 +46,7 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
           <CardTitle>Файлы</CardTitle>
         </CardHeader>
         <CardContent>
-          <DocumentList documents={(documents ?? []) as any} clientId={id} />
+          <DocumentList documents={(documents ?? [])} clientId={id} />
         </CardContent>
       </Card>
       <Card>

@@ -2,8 +2,9 @@
 
 import { supabaseServer } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import type { ExtractedData } from '../../../types/database'
 
-export async function updateClientData(clientId: string, data: any) {
+export async function updateClientData(clientId: string, data: ExtractedData) {
   const supabase = supabaseServer()
   const { data: current } = await supabase
     .from('clients')
@@ -21,7 +22,7 @@ export async function updateClientData(clientId: string, data: any) {
 
 export async function updateClientDataAction(formData: FormData) {
   const clientId = String(formData.get('client_id') ?? '')
-  const payload = {
+  const payload: ExtractedData = {
     surname: String(formData.get('surname') ?? ''),
     name: String(formData.get('name') ?? ''),
     patronymic: String(formData.get('patronymic') ?? ''),
