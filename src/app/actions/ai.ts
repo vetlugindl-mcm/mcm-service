@@ -73,6 +73,42 @@ export async function recognizeDocument(fileUrl: string, clientId: string) {
     .from('clients')
     .update({ extracted_data: merged, ...profilePatch })
     .eq('id', clientId)
+    .then(async ({ error }) => {
+      if (error) {
+        console.error('Client update error', error)
+        await supabase.from('clients').update({ extracted_data: merged }).eq('id', clientId)
+      }
+    })
+
+  // Try to mark document type and link file urls for diploma/certificate
+  try {
+    const { data: docs } = await supabase
+      .from('documents')
+      .select('id')
+      .eq('client_id', clientId)
+      .eq('file_url', fileUrl)
+    const docId = Array.isArray(docs) && docs[0]?.id
+    if (docId) {
+      await supabase
+        .from('documents')
+        .update({ file_type: dt })
+        .eq('id', docId)
+    }
+    if (dt === 'diploma' && !profilePatch['diploma_file_url']) {
+      await supabase
+        .from('clients')
+        .update({ diploma_file_url: fileUrl })
+        .eq('id', clientId)
+    }
+    if (dt === 'certificate' && !profilePatch['cert_file_url']) {
+      await supabase
+        .from('clients')
+        .update({ cert_file_url: fileUrl })
+        .eq('id', clientId)
+    }
+  } catch (e) {
+    console.error('Document type/link update error', e)
+  }
 
   revalidatePath(`/client/${clientId}`)
   return merged
