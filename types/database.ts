@@ -23,6 +23,23 @@ export interface Client {
   status: ClientStatus
   extracted_data: ExtractedData | null
   created_at: string
+  registration_place?: string | null
+  diploma_series?: string | null
+  diploma_number?: string | null
+  diploma_reg_number?: string | null
+  diploma_university_name?: string | null
+  diploma_university_location?: string | null
+  diploma_specialty?: string | null
+  diploma_specialization?: string | null
+  diploma_qualification?: string | null
+  diploma_qualification_date?: string | null
+  diploma_file_url?: string | null
+  cert_reg_number?: string | null
+  cert_issue_date?: string | null
+  cert_expiry_date?: string | null
+  cert_center_name?: string | null
+  cert_center_location?: string | null
+  cert_file_url?: string | null
 }
 
 export interface Document {
@@ -30,6 +47,7 @@ export interface Document {
   client_id: string
   original_name?: string
   file_url?: string
+  file_type?: string
   filename?: string
   path?: string
   mime_type?: string
