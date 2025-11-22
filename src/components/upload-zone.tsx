@@ -9,34 +9,38 @@ import { createDocumentRecord } from '@/app/actions/uploadFile'
 import { useRouter } from 'next/navigation'
 
 export function UploadZone({ clientId }: { clientId: string }) {
-  const [file, setFile] = useState<File | null>(null)
+  const [files, setFiles] = useState<File[]>([])
+  const [uploading, setUploading] = useState(false)
   const router = useRouter()
 
   async function handleUpload() {
-    if (!file) return
-    const ext = (file.name.split('.').pop() || '').toLowerCase()
-    const fileName = ext ? `${Date.now()}.${ext}` : `${Date.now()}`
-    const filePath = fileName
-    const { error } = await supabaseBrowser.storage.from('documents').upload(filePath, file, { upsert: true })
-    if (error) return
-    await createDocumentRecord({
-      client_id: clientId,
-      original_name: file.name,
-      file_url: filePath,
-      mime_type: file.type,
-      size: file.size,
-    })
+    if (!files.length) return
+    setUploading(true)
+    for (const file of files) {
+      const ext = (file.name.split('.').pop() || '').toLowerCase()
+      const fileName = ext ? `${clientId}/${Date.now()}.${ext}` : `${clientId}/${Date.now()}`
+      const { error } = await supabaseBrowser.storage.from('documents').upload(fileName, file, { upsert: true })
+      if (error) continue
+      await createDocumentRecord({
+        client_id: clientId,
+        original_name: file.name,
+        file_url: fileName,
+        mime_type: file.type,
+        size: file.size,
+      })
+    }
+    setUploading(false)
+    setFiles([])
     router.refresh()
-    setFile(null)
   }
 
   return (
     <div className="space-y-3">
       <div className="space-y-2">
-        <Label htmlFor="file">Файл</Label>
-        <Input id="file" type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+        <Label htmlFor="file">Файлы</Label>
+        <Input id="file" type="file" multiple onChange={(e) => setFiles(Array.from(e.target.files ?? []))} />
       </div>
-      <Button onClick={handleUpload} disabled={!file}>Загрузить</Button>
+      <Button onClick={handleUpload} disabled={!files.length || uploading}>{uploading ? 'Загрузка...' : 'Загрузить'}</Button>
     </div>
   )
 }

@@ -19,7 +19,7 @@ export function DocumentList({ documents, clientId }: { documents: Document[]; c
   const [current, setCurrent] = useState<Document | null>(null)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
-  const [form, setForm] = useState<{ original_name?: string; file_url?: string; mime_type?: string; size?: number }>({})
+  const [form, setForm] = useState<{ original_name?: string; file_url?: string; mime_type?: string; size?: number; file_type?: string }>({})
 
   async function onRecognize(d: Document) {
     setLoadingId(d.id)
@@ -37,6 +37,7 @@ export function DocumentList({ documents, clientId }: { documents: Document[]; c
       file_url: d.file_url ?? '',
       mime_type: d.mime_type ?? '',
       size: typeof d.size === 'number' ? d.size : undefined,
+      file_type: (d as unknown as { file_type?: string }).file_type ?? '',
     })
     setEditOpen(true)
   }
@@ -53,6 +54,7 @@ export function DocumentList({ documents, clientId }: { documents: Document[]; c
           file_url: form.file_url ?? undefined,
           mime_type: form.mime_type ?? undefined,
           size: typeof form.size === 'number' ? form.size : undefined,
+          file_type: form.file_type ?? undefined,
         }),
       })
       if (!res.ok) throw new Error('Update failed')
@@ -158,16 +160,20 @@ export function DocumentList({ documents, clientId }: { documents: Document[]; c
             <Label htmlFor="file_url">Путь/URL</Label>
             <Input id="file_url" value={form.file_url ?? ''} onChange={(e) => setForm({ ...form, file_url: e.target.value })} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label htmlFor="mime_type">MIME</Label>
-              <Input id="mime_type" value={form.mime_type ?? ''} onChange={(e) => setForm({ ...form, mime_type: e.target.value })} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="size">Размер</Label>
-              <Input id="size" type="number" value={form.size ?? ''} onChange={(e) => setForm({ ...form, size: e.target.value ? Number(e.target.value) : undefined })} />
-            </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
+            <Label htmlFor="mime_type">MIME</Label>
+            <Input id="mime_type" value={form.mime_type ?? ''} onChange={(e) => setForm({ ...form, mime_type: e.target.value })} />
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="size">Размер</Label>
+            <Input id="size" type="number" value={form.size ?? ''} onChange={(e) => setForm({ ...form, size: e.target.value ? Number(e.target.value) : undefined })} />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="file_type">Тип документа</Label>
+          <Input id="file_type" value={form.file_type ?? ''} onChange={(e) => setForm({ ...form, file_type: e.target.value })} placeholder="passport | diploma | snils | certificate" />
+        </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setEditOpen(false)} disabled={saving}>Отмена</Button>

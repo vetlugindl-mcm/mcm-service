@@ -10,6 +10,7 @@ export type CreateDocumentInput = {
   file_url: string
   mime_type?: string
   size?: number
+  file_type?: string
 }
 
 export async function createDocumentRecord(input: CreateDocumentInput): Promise<Document> {
@@ -22,6 +23,7 @@ export async function createDocumentRecord(input: CreateDocumentInput): Promise<
       file_url: input.file_url,
       mime_type: input.mime_type,
       size: input.size,
+      file_type: input.file_type,
     })
     .select()
     .single()

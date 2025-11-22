@@ -33,7 +33,7 @@ export async function recognize(input: OCRRecognizeInput, options: OCRRecognizeO
   const fallbackName = options.modelFallback ?? 'gemini-2.0-flash'
   const language = options.language ?? 'ru'
 
-  const prompt = `Проанализируй документ (Паспорт РФ, СНИЛС или Диплом) и извлеки данные в строгом JSON.
+  const prompt = `Проанализируй документ (Паспорт РФ, СНИЛС, Диплом или Свидетельство о квалификации) и извлеки данные в строгом JSON.
 Язык интерфейса: ${language}.
 Структура:
 {
@@ -47,7 +47,22 @@ export async function recognize(input: OCRRecognizeInput, options: OCRRecognizeO
   "issue_date": "DD.MM.YYYY",
   "issuer": "...",
   "code": "...",
-  "snils_number": "..."
+  "snils_number": "...",
+  "registration_place": "...",
+  "diploma_series": "...",
+  "diploma_number": "...",
+  "diploma_reg_number": "...",
+  "diploma_university_name": "...",
+  "diploma_university_location": "...",
+  "diploma_specialty": "...",
+  "diploma_specialization": "...",
+  "diploma_qualification": "...",
+  "diploma_qualification_date": "DD.MM.YYYY",
+  "cert_reg_number": "...",
+  "cert_issue_date": "DD.MM.YYYY",
+  "cert_expiry_date": "DD.MM.YYYY",
+  "cert_center_name": "...",
+  "cert_center_location": "..."
 }
 Верни ТОЛЬКО чистый JSON.`
 
@@ -84,4 +99,3 @@ export function detectMimeFromUrl(url: string): string {
   if (lower.endsWith('.png')) return 'image/png'
   return 'application/pdf'
 }
-

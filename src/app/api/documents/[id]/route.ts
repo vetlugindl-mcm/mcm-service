@@ -30,6 +30,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (typeof body?.file_url === 'string') patch.file_url = body.file_url
     if (typeof body?.mime_type === 'string') patch.mime_type = body.mime_type
     if (typeof body?.size === 'number') patch.size = body.size
+    if (typeof body?.file_type === 'string') (patch as Record<string, unknown>).file_type = body.file_type
     const { id } = await params
     const data = await updateDocumentService(id, patch)
     if (!data) return Response.json({ error: 'Not found' }, { status: 404 })
