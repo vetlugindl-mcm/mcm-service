@@ -44,6 +44,7 @@ export async function recognizeDocument(fileUrl: string, clientId: string) {
   const mime = detectMimeFromUrl(fetchUrl)
 
   const parsed = await ocrRecognize({ base64, mimeType: mime }, { language: 'ru' }) as Parsed
+  console.log('OCR parsed doc_type:', parsed.doc_type, 'diploma_series:', parsed.diploma_series, 'diploma_number:', parsed.diploma_number)
 
   const { data: current } = await supabase
     .from('clients')
@@ -71,6 +72,7 @@ export async function recognizeDocument(fileUrl: string, clientId: string) {
   }
 
   const merged: ExtractedData = { ...(current?.extracted_data ?? {}), ...(extractedPatch ?? {}) }
+  console.log('Merged extracted_data patch diploma_number:', (extractedPatch as Record<string, unknown>)['diploma_number'])
 
   const profilePatch: Record<string, unknown> = {}
   if (dt === 'passport') {

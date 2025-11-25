@@ -119,11 +119,11 @@ export function ClientDataForm({ clientId, data, clientMeta }: { clientId: strin
       </div>
       <div className="space-y-2">
         <Label htmlFor="diploma_series">Серия диплома</Label>
-        <Input id="diploma_series" name="diploma_series" maxLength={64} defaultValue={String(clientMeta?.diploma_series ?? data?.diploma_series ?? '')} />
+        <Input id="diploma_series" name="diploma_series" maxLength={64} defaultValue={String(data?.diploma_series ?? clientMeta?.diploma_series ?? '')} />
       </div>
       <div className="space-y-2">
         <Label htmlFor="diploma_number">Номер диплома</Label>
-        <Input id="diploma_number" name="diploma_number" maxLength={64} defaultValue={String(clientMeta?.diploma_number ?? data?.diploma_number ?? '')} onBlur={(e) => {
+        <Input id="diploma_number" name="diploma_number" maxLength={64} defaultValue={String(data?.diploma_number ?? clientMeta?.diploma_number ?? '')} onBlur={(e) => {
           const v = e.target.value.trim()
           setErrors((prev) => ({ ...prev, diplomaNumber: '' }))
           if (!v) return
@@ -146,23 +146,23 @@ export function ClientDataForm({ clientId, data, clientMeta }: { clientId: strin
       </div>
       <div className="space-y-2">
         <Label htmlFor="diploma_university_name">Учебное заведение</Label>
-        <Input id="diploma_university_name" name="diploma_university_name" maxLength={256} defaultValue={String(clientMeta?.diploma_university_name ?? data?.diploma_university_name ?? '')} />
+        <Input id="diploma_university_name" name="diploma_university_name" maxLength={256} defaultValue={String(data?.diploma_university_name ?? clientMeta?.diploma_university_name ?? '')} />
       </div>
       <div className="space-y-2">
         <Label htmlFor="diploma_university_location">Местонахождение учебного заведения</Label>
-        <Input id="diploma_university_location" name="diploma_university_location" maxLength={256} defaultValue={String(clientMeta?.diploma_university_location ?? data?.diploma_university_location ?? '')} />
+        <Input id="diploma_university_location" name="diploma_university_location" maxLength={256} defaultValue={String(data?.diploma_university_location ?? clientMeta?.diploma_university_location ?? '')} />
       </div>
       <div className="space-y-2">
         <Label htmlFor="diploma_specialty">Специальность</Label>
-        <Input id="diploma_specialty" name="diploma_specialty" maxLength={256} defaultValue={String(clientMeta?.diploma_specialty ?? data?.diploma_specialty ?? '')} />
+        <Input id="diploma_specialty" name="diploma_specialty" maxLength={256} defaultValue={String(data?.diploma_specialty ?? clientMeta?.diploma_specialty ?? '')} />
       </div>
       <div className="space-y-2">
         <Label htmlFor="diploma_qualification">Квалификация</Label>
-        <Input id="diploma_qualification" name="diploma_qualification" maxLength={256} defaultValue={String(clientMeta?.diploma_qualification ?? data?.diploma_qualification ?? '')} />
+        <Input id="diploma_qualification" name="diploma_qualification" maxLength={256} defaultValue={String(data?.diploma_qualification ?? clientMeta?.diploma_qualification ?? '')} />
       </div>
       <div className="space-y-2">
         <Label htmlFor="diploma_qualification_date">Дата присвоения квалификации</Label>
-        <Input id="diploma_qualification_date" name="diploma_qualification_date" maxLength={32} defaultValue={String(clientMeta?.diploma_qualification_date ?? data?.diploma_qualification_date ?? '')} />
+        <Input id="diploma_qualification_date" name="diploma_qualification_date" maxLength={32} defaultValue={String(data?.diploma_qualification_date ?? clientMeta?.diploma_qualification_date ?? '')} />
       </div>
       <div className="md:col-span-2 space-y-2">
         <Label htmlFor="diploma_file">Файл диплома</Label>
