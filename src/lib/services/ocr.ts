@@ -179,20 +179,22 @@ function normalize(obj: Record<string, unknown>): Record<string, unknown> {
       }
     }
     if (!finalNumber) {
+      const tokens: string[] = []
       for (const v of Object.values(out)) {
         if (typeof v === 'string') {
           const s = v.trim()
-          // New format: two blocks with a space → keep single space
           const m2 = s.match(/\b(\d{6})\s+(\d{6,7})\b/)
           if (m2) { finalNumber = `${m2[1]} ${m2[2]}`; break }
-          // Single long block (>=12 digits) → split 6 + rest
           const m1 = s.match(/\b\d{12,}\b/)
-          if (!finalNumber && m1) {
-            const raw = m1[0]
-            finalNumber = `${raw.slice(0, 6)} ${raw.slice(6)}`
-            break
-          }
+          if (m1) { const raw = m1[0]; finalNumber = `${raw.slice(0, 6)} ${raw.slice(6)}`; break }
+          const all = s.match(/\b\d{6,7}\b/g)
+          if (all) tokens.push(...all)
         }
+      }
+      if (!finalNumber && tokens.length >= 2) {
+        const first6 = tokens.find(t => t.length === 6)
+        const second = tokens.find(t => t !== first6 && (t.length === 6 || t.length === 7))
+        if (first6 && second) finalNumber = `${first6} ${second}`
       }
     }
     if (finalNumber) out['diploma_number'] = finalNumber.replace(/^\s+|\s+$/g, '').replace(/\s{2,}/g, ' ')
