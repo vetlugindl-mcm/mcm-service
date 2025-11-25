@@ -170,6 +170,28 @@ function normalize(obj: Record<string, unknown>): Record<string, unknown> {
         out['diploma_number'] = m[2]
       }
     }
+    // If diploma_number still missing for new format, try to derive from generic number or any text value
+    let finalNumber = String(out['diploma_number'] ?? '').trim()
+    if (!finalNumber) {
+      const generic = String(out['number'] ?? '').trim()
+      if (/\d{4,}/.test(generic)) {
+        finalNumber = generic.replace(/[^0-9]/g, '')
+      }
+    }
+    if (!finalNumber) {
+      for (const v of Object.values(out)) {
+        if (typeof v === 'string') {
+          const s = v.trim()
+          // Match two digit blocks separated by space (new format), take full numeric sequence
+          const m2 = s.match(/\b(\d{4,})\s+(\d{4,})\b/)
+          if (m2) { finalNumber = (m2[1] + m2[2]).replace(/\s+/g, ''); break }
+          // Or a single long block of digits (>=6)
+          const m1 = s.match(/\b\d{6,}\b/)
+          if (!finalNumber && m1) { finalNumber = m1[0]; break }
+        }
+      }
+    }
+    if (finalNumber) out['diploma_number'] = finalNumber
     // Mark format
     const finalSeries = String(out['diploma_series'] ?? '').trim()
     out['diploma_format'] = finalSeries ? 'old' : 'new'
