@@ -182,16 +182,20 @@ function normalize(obj: Record<string, unknown>): Record<string, unknown> {
       for (const v of Object.values(out)) {
         if (typeof v === 'string') {
           const s = v.trim()
-          // Match two digit blocks separated by space (new format), take full numeric sequence
-          const m2 = s.match(/\b(\d{4,})\s+(\d{4,})\b/)
-          if (m2) { finalNumber = (m2[1] + m2[2]).replace(/\s+/g, ''); break }
-          // Or a single long block of digits (>=6)
-          const m1 = s.match(/\b\d{6,}\b/)
-          if (!finalNumber && m1) { finalNumber = m1[0]; break }
+          // New format: two blocks with a space → keep single space
+          const m2 = s.match(/\b(\d{6})\s+(\d{6,7})\b/)
+          if (m2) { finalNumber = `${m2[1]} ${m2[2]}`; break }
+          // Single long block (>=12 digits) → split 6 + rest
+          const m1 = s.match(/\b\d{12,}\b/)
+          if (!finalNumber && m1) {
+            const raw = m1[0]
+            finalNumber = `${raw.slice(0, 6)} ${raw.slice(6)}`
+            break
+          }
         }
       }
     }
-    if (finalNumber) out['diploma_number'] = finalNumber
+    if (finalNumber) out['diploma_number'] = finalNumber.replace(/^\s+|\s+$/g, '').replace(/\s{2,}/g, ' ')
     // Mark format
     const finalSeries = String(out['diploma_series'] ?? '').trim()
     out['diploma_format'] = finalSeries ? 'old' : 'new'

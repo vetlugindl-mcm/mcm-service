@@ -19,7 +19,7 @@ export function ClientDataForm({ clientId, data, clientMeta }: { clientId: strin
   const [certificateFile, setCertificateFile] = useState<File | null>(null)
   const [diplomaUrl, setDiplomaUrl] = useState<string>(clientMeta?.diploma_file_url ?? '')
   const [certificateUrl, setCertificateUrl] = useState<string>(clientMeta?.cert_file_url ?? '')
-  const [errors, setErrors] = useState<{ passport?: string; diploma?: string; certificate?: string }>({})
+  const [errors, setErrors] = useState<{ passport?: string; diploma?: string; certificate?: string; diplomaNumber?: string }>({})
 
   async function onSubmit(formData: FormData) {
     setSaving(true)
@@ -123,7 +123,14 @@ export function ClientDataForm({ clientId, data, clientMeta }: { clientId: strin
       </div>
       <div className="space-y-2">
         <Label htmlFor="diploma_number">Номер диплома</Label>
-        <Input id="diploma_number" name="diploma_number" maxLength={64} defaultValue={String(clientMeta?.diploma_number ?? data?.diploma_number ?? '')} />
+        <Input id="diploma_number" name="diploma_number" maxLength={64} defaultValue={String(clientMeta?.diploma_number ?? data?.diploma_number ?? '')} onBlur={(e) => {
+          const v = e.target.value.trim()
+          setErrors((prev) => ({ ...prev, diplomaNumber: '' }))
+          if (!v) return
+          const ok = /^\d{6}\s\d{6,7}$/.test(v)
+          if (!ok) setErrors((prev) => ({ ...prev, diplomaNumber: 'Ожидается формат 6 цифр пробел 6-7 цифр (XXXXXX XXXXXXX)' }))
+        }} />
+        {errors.diplomaNumber && <div className="text-destructive text-sm">{errors.diplomaNumber}</div>}
       </div>
       <div className="space-y-2">
         <Label htmlFor="diploma_reg_number">Регистрационный номер диплома</Label>
@@ -209,7 +216,7 @@ export function ClientDataForm({ clientId, data, clientMeta }: { clientId: strin
       </div>
 
       <div className="md:col-span-2 flex justify-end">
-        <Button type="submit" disabled={saving || !!errors.passport || !!errors.diploma || !!errors.certificate}>{saving ? 'Сохранение...' : 'Сохранить изменения'}</Button>
+        <Button type="submit" disabled={saving || !!errors.passport || !!errors.diploma || !!errors.certificate || !!errors.diplomaNumber}>{saving ? 'Сохранение...' : 'Сохранить изменения'}</Button>
       </div>
     </form>
   )
