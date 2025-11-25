@@ -150,10 +150,6 @@ export function ClientDataForm({ clientId, data, clientMeta }: { clientId: strin
         <Input id="diploma_specialty" name="diploma_specialty" maxLength={256} defaultValue={String(clientMeta?.diploma_specialty ?? data?.diploma_specialty ?? '')} />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="diploma_specialization">Специализация</Label>
-        <Input id="diploma_specialization" name="diploma_specialization" maxLength={256} defaultValue={String(clientMeta?.diploma_specialization ?? data?.diploma_specialization ?? '')} />
-      </div>
-      <div className="space-y-2">
         <Label htmlFor="diploma_qualification">Квалификация</Label>
         <Input id="diploma_qualification" name="diploma_qualification" maxLength={256} defaultValue={String(clientMeta?.diploma_qualification ?? data?.diploma_qualification ?? '')} />
       </div>

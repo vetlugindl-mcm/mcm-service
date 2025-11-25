@@ -60,7 +60,7 @@ export async function recognizeDocument(fileUrl: string, clientId: string) {
     if (parsed.series) extractedPatch.diploma_series = String(parsed.series)
     if (parsed.number) extractedPatch.diploma_number = String(parsed.number)
     const dkeys: (keyof Parsed)[] = [
-      'diploma_series','diploma_number','diploma_reg_number','diploma_university_name','diploma_university_location','diploma_specialty','diploma_specialization','diploma_qualification','diploma_qualification_date'
+      'diploma_series','diploma_number','diploma_reg_number','diploma_university_name','diploma_university_location','diploma_specialty','diploma_qualification','diploma_qualification_date'
     ]
     for (const k of dkeys) if (parsed[k] !== undefined) (extractedPatch as Record<string, unknown>)[k as string] = parsed[k] as unknown
   } else if (dt === 'certificate') {
@@ -78,7 +78,7 @@ export async function recognizeDocument(fileUrl: string, clientId: string) {
   }
   if (dt === 'diploma') {
     const keys: (keyof Parsed)[] = [
-      'diploma_series','diploma_number','diploma_reg_number','diploma_university_name','diploma_university_location','diploma_specialty','diploma_specialization','diploma_qualification','diploma_qualification_date'
+      'diploma_series','diploma_number','diploma_reg_number','diploma_university_name','diploma_university_location','diploma_specialty','diploma_qualification','diploma_qualification_date'
     ]
     for (const k of keys) if (parsed[k] !== undefined) (profilePatch as Record<string, unknown>)[k as string] = parsed[k] as unknown
   }

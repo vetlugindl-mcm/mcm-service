@@ -55,7 +55,6 @@ export async function recognize(input: OCRRecognizeInput, options: OCRRecognizeO
   "diploma_university_name": "...",
   "diploma_university_location": "...",
   "diploma_specialty": "...",
-  "diploma_specialization": "...",
   "diploma_qualification": "...",
   "diploma_qualification_date": "DD.MM.YYYY",
   "cert_reg_number": "...",
@@ -66,7 +65,7 @@ export async function recognize(input: OCRRecognizeInput, options: OCRRecognizeO
 }
 Верни ТОЛЬКО чистый JSON.`
 
- async function callModel(modelName: string): Promise<Record<string, unknown>> {
+  async function callModel(modelName: string): Promise<Record<string, unknown>> {
     const model = genAI.getGenerativeModel({ model: modelName })
     const result = await model.generateContent([
       { text: prompt },
@@ -122,7 +121,6 @@ function normalize(obj: Record<string, unknown>): Record<string, unknown> {
     'город': 'diploma_university_location',
     'специальность': 'diploma_specialty',
     'направление подготовки': 'diploma_specialty',
-    'специализация': 'diploma_specialization',
     'квалификация': 'diploma_qualification',
     'дата_присвоения_квалификации': 'diploma_qualification_date',
     'дата присвоения квалификации': 'diploma_qualification_date',
@@ -158,6 +156,23 @@ function normalize(obj: Record<string, unknown>): Record<string, unknown> {
       'свидетельство': 'certificate',
     }
     out['doc_type'] = map[dt] ?? dt
+  }
+
+  // Diploma old/new heuristics
+  if (out['doc_type'] === 'diploma') {
+    const series = String(out['diploma_series'] ?? '').trim()
+    const number = String(out['diploma_number'] ?? '').trim()
+    // If no explicit series but number looks like "SERIES NUMBER" → split
+    if (!series && /[A-Za-zА-ЯЁ]{2,}\s+\d{4,}/.test(number)) {
+      const m = number.match(/([A-Za-zА-ЯЁ]{2,})\s+(\d{4,})/)
+      if (m) {
+        out['diploma_series'] = m[1]
+        out['diploma_number'] = m[2]
+      }
+    }
+    // Mark format
+    const finalSeries = String(out['diploma_series'] ?? '').trim()
+    out['diploma_format'] = finalSeries ? 'old' : 'new'
   }
   return out
 }

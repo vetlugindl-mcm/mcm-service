@@ -30,7 +30,6 @@ export interface Client {
   diploma_university_name?: string | null
   diploma_university_location?: string | null
   diploma_specialty?: string | null
-  diploma_specialization?: string | null
   diploma_qualification?: string | null
   diploma_qualification_date?: string | null
   diploma_file_url?: string | null
